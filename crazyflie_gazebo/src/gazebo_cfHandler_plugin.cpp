@@ -102,6 +102,9 @@ void GazeboCfHandler::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf){
 	if (dest_addr == "usb" || dest_addr == "radio"){
 		is_hitl = true;
 		gzdbg << "Simulation is in HITL mode for Handler : " << model_->GetName() << std::endl;
+		gzdbg << "uri: " << uri << std::endl;
+		gzdbg << "dest_port: " << dest_port << std::endl;
+		gzdbg << "dest_addr: " << dest_port << std::endl;
 	} else {
 		gzdbg << "Simulation is in SITL mode with address,port :  " << dest_addr << " , " << dest_port << " for Handler : " << model_->GetName() << std::endl;
 	}
@@ -131,10 +134,12 @@ void GazeboCfHandler::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf){
 		addrlen_rcv = sizeof(remaddr_rcv);
 	}
 
+
 	// Init consumer producer queue
 	cfToInitialize =  moodycamel::ReaderWriterQueue<int>(MAX_QUADS);
 	subPubToInitialize = moodycamel::ReaderWriterQueue<int>(MAX_QUADS);
 	m_queueSend = moodycamel::BlockingReaderWriterQueue<SensorsData>(6);
+
 
 	for (uint8_t i = 0 ; i< nbQuads ; i++){
 		addrlen[i] = sizeof(remaddr[i]);
@@ -154,24 +159,45 @@ void GazeboCfHandler::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf){
 		senderThread = std::thread(&GazeboCfHandler::sendThread , this);
 		gzdbg << "Receiver, sender task created for Handler : " << model_->GetName() << std::endl;
 	} else {
-		cfROS_[0] = new CrazyflieROS(
-			uri,
-			cf_prefix + std::to_string(first_index),
-			0.0,
-			0.0,
-			enable_logging,
-			enable_parameters,
-			logBlocks,
-			use_ros_time,
-			enable_logging_imu,
-			enable_logging_temperature,
-			enable_logging_magnetic_field,
-			enable_logging_pressure,
-			enable_logging_battery,
-			enable_logging_packets);
+		// gzdbg << "Reached 159 successfully :)" << std::endl;
+		// gzdbg << "uri: " << uri << std::endl;
+		// gzdbg << "cf_prefix: " << cf_prefix << std::endl;
+		// gzdbg << "first_index: " << first_index << std::endl;
+		// gzdbg << "enable_logging: " << enable_logging << std::endl;
+		// gzdbg << "enable_parameters: " << enable_parameters << std::endl;
+		// gzdbg << "use_ros_time: " << use_ros_time << std::endl;
+		// gzdbg << "enable_logging_imu: " << enable_logging_imu << std::endl;
+		// gzdbg << "enable_logging_temperature: " << enable_logging_temperature << std::endl;
+		// gzdbg << "enable_logging_magnetic_field: " << enable_logging_magnetic_field << std::endl;
+		// gzdbg << "enable_logging_battery: " << enable_logging_battery << std::endl;
+		// gzdbg << "enable_logging_packets: " << enable_logging_packets << std::endl;
+
+		try {
+			cfROS_[0] = new CrazyflieROS(
+				uri,
+				cf_prefix + std::to_string(first_index),
+				0.0,
+				0.0,
+				enable_logging,
+				enable_parameters,
+				logBlocks,
+				use_ros_time,
+				enable_logging_imu,
+				enable_logging_temperature,
+				enable_logging_magnetic_field,
+				enable_logging_pressure,
+				enable_logging_battery,
+				enable_logging_packets);
+		} catch (const std::exception& e) {
+			std::cerr << "Exception occurred while creating CrazyflieROS: " << e.what() << std::endl;
+		} catch (...) {
+			std::cerr << "Unknown exception occurred while creating CrazyflieROS." << std::endl;
+		}
+
 		std::function<void(const crtpMotorsDataResponse*)> cb_motors = std::bind(&GazeboCfHandler::onMotorsDataCallback, this, std::placeholders::_1);
 		cfROS_[0]->setOnMotorsData(cb_motors);
 		subPubToInitialize.enqueue(0);
+		gzdbg << "Reached 197 successfully :)" << std::endl;
 
 	}
 }
