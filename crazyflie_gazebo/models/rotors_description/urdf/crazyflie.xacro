@@ -7,7 +7,7 @@
 <robot name="crazyflie" xmlns:xacro="http://ros.org/wiki/xacro">
   <!-- Properties -->
   <xacro:property name="namespace" value="$(arg namespace)" />
-  <xacro:property name="rotor_velocity_slowdown_sim" value="70" />
+  <xacro:property name="rotor_velocity_slowdown_sim" value="50" />
 
   <xacro:property name="mesh_file" value="crazyflie.dae" />
   <xacro:property name="mesh_scale" value="1 1 1"/>
@@ -43,9 +43,9 @@
   <!-- inertia of a single rotor, assuming it is a cuboid. Height=0.3mm, width=0.9mm -->
   <xacro:property name="rotor_inertia">
     <inertia
-    ixx="8.33333E-09"
-    iyy="1.08333E-07"
-    izz="1.13333E-07"
+    ixx="${1/12 * mass_rotor * (0.006 * 0.006 + 0.001 * 0.001) * rotor_velocity_slowdown_sim}"
+    iyy="${1/12 * mass_rotor * (4 * radius_rotor * radius_rotor + 0.001 * 0.001) * rotor_velocity_slowdown_sim}"
+    izz="${1/12 * mass_rotor * (4 * radius_rotor * radius_rotor + 0.006 * 0.006) * rotor_velocity_slowdown_sim}"
     ixy="0.0" ixz="0.0"  iyz="0.0" /> <!-- [kg.m^2] [kg.m^2] [kg.m^2] [kg.m^2] [kg.m^2] [kg.m^2] -->
   </xacro:property>
 
