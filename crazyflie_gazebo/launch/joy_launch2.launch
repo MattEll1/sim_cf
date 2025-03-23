@@ -39,7 +39,7 @@
       <param name="groupMask" value="0"/>
     </node> -->
 
-    <node pkg="crazyflie_gazebo" name="cf_joy" type="joy_control_node" output="screen">
+    <node pkg="crazyflie_gazebo" name="cf_joy" type="joy_control_node2" output="screen">
       <param name="positionTopic" value="$(arg positionTopic)" />
       <param name="only_command" value = "$(arg only_command)" />
       <!-- Button mapping -->

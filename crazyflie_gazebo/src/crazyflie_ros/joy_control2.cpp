@@ -159,6 +159,23 @@ bool is_velctl = false;
 //Store axes moves of the joystick
 double up_down(0) ,  left_right(0) , back_forward(0) , yaw(0);
 
+//For 3020 hitl, immediately start in attitude control mode
+void attitude_init(bool reset_control_type){
+    is_arm = true;
+    current_state = ACC_ATT_CONTROL;
+    ROS_WARN("ATTITUDE CONTROL SELECTED ! ");
+    
+    is_attctl = true;
+    is_posctl = false;
+    is_velctl = false;
+    is_taking_off = false;
+    is_landing = false;
+    is_arm = true;
+    reset_control_type = true;
+    ROS_WARN("ATTITUDE CONTROL ACTIVATED !");
+
+}
+
 
 //Main joy callback function for dealing with Joystick event
 void joy_callback(const sensor_msgs::Joy::ConstPtr& msg){
@@ -313,10 +330,13 @@ int main(int argc, char **argv)
     ros::init(argc,argv,"joy_command_node");
     ros::NodeHandle nh_params("~");
 
-    if (!nh_params.getParam("positionTopic", positionTopic)){
-        positionTopic = "position";
-        ROS_WARN("No parameter positionTopic provided. Using default value %s !", positionTopic.c_str());
-    }
+    // if (!nh_params.getParam("positionTopic", positionTopic)){
+    //     positionTopic = "position";
+    //     ROS_WARN("No parameter positionTopic provided. Using default value %s !", positionTopic.c_str());
+    // }
+
+    // Force positione to be topic
+    positionTopic = "local_position";
 
     if(!nh_params.getParam("LB",LB)){
         LB = VEL_ACC;
@@ -461,10 +481,12 @@ int main(int argc, char **argv)
     ros::Rate main_rate(MAIN_LOOP_RATE);
 
     // Need to arm a first time before anything else
-    while (!last_is_arm){
-        m_callback_queue.callAvailable(ros::WallDuration(0.0));
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
-    }
+    // while (!last_is_arm){
+    //     m_callback_queue.callAvailable(ros::WallDuration(0.0));
+    //     std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    // }
+    bool reset_control_type = false;
+    attitude_init(reset_control_type);
 
     crazyflie_driver::UpdateParams m_params;
     m_params.request.params.push_back("commander/enHighLevel");
