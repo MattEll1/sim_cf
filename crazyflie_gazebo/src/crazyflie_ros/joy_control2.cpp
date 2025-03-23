@@ -20,6 +20,8 @@
 #include <tf/transform_datatypes.h>
 #include <geometry_msgs/Quaternion.h>
 
+#include <std_msgs/Float32MultiArray.h>
+
 #define ATT_CONTROL_TOPIC                               "cmd_vel"
 #define POS_CONTROL_TOPIC                               "cmd_position"
 #define VEL_CONTROL_TOPIC                               "cmd_hover"
@@ -159,6 +161,13 @@ bool is_velctl = false;
 //Store axes moves of the joystick
 double up_down(0) ,  left_right(0) , back_forward(0) , yaw(0);
 
+//Direct control variables
+bool using_direct_control = false;  // Flag to use direct control instead of joystick
+float direct_roll = 0.0f;           // Roll value from direct control
+float direct_pitch = 0.0f;          // Pitch value from direct control
+float direct_yaw = 0.0f;            // Yaw value from direct control
+float direct_throttle = 0.0f;       // Throttle value from direct control
+
 //For 3020 hitl, immediately start in attitude control mode
 void attitude_init(bool reset_control_type){
     is_arm = true;
@@ -174,6 +183,19 @@ void attitude_init(bool reset_control_type){
     reset_control_type = true;
     ROS_WARN("ATTITUDE CONTROL ACTIVATED !");
 
+}
+
+
+void direct_control_callback(const std_msgs::Float32MultiArray::ConstPtr& msg) {
+    if (msg->data.size() >= 4) {
+        direct_roll = msg->data[0];     // Range: -1.0 to 1.0
+        direct_pitch = msg->data[1];    // Range: -1.0 to 1.0
+        direct_yaw = msg->data[2];      // Range: -1.0 to 1.0
+        direct_throttle = msg->data[3]; // Range: 0.0 to 1.0
+        using_direct_control = true;    // Switch to direct control mode
+        ROS_INFO("Received direct control: [%f, %f, %f, %f]", 
+            msg->data[0], msg->data[1], msg->data[2], msg->data[3]);
+    }
 }
 
 
@@ -470,6 +492,7 @@ int main(int argc, char **argv)
     //Subscribers
     ros::Subscriber joy_sub =nh.subscribe<sensor_msgs::Joy>("joy",10,joy_callback);
     ros::Subscriber pose_subscriber = nh.subscribe<crazyflie_driver::GenericLogData>(positionTopic,10,curr_pos_callback);
+    ros::Subscriber direct_control_sub = nh.subscribe<std_msgs::Float32MultiArray>("direct_control", 10, direct_control_callback); // created to directly control hitl sim
 
     //Service
     takeoff_client = nh.serviceClient<crazyflie_driver::Takeoff>(TAKEOFF_TOPIC);
@@ -546,11 +569,22 @@ int main(int argc, char **argv)
             vel_control_pub.publish(vel_control_msg);
         }
         if(!only_command && is_attctl){       //Attitude control
-            att_control_msg.linear.y = - left_right * roll_max;
-            att_control_msg.linear.x = back_forward * pitch_max;
-            current_yaw += yaw * (yaw_max_rate) * dt.toSec();
-            att_control_msg.linear.z = up_down * throttle_max ;
-            att_control_msg.angular.z = - yaw * (yaw_max_rate);
+            if (using_direct_control) {
+                // Use direct control values
+                att_control_msg.linear.y = -direct_roll * roll_max;
+                att_control_msg.linear.x = direct_pitch * pitch_max;
+                current_yaw += direct_yaw * (yaw_max_rate) * dt.toSec();
+                att_control_msg.linear.z = direct_throttle * throttle_max;
+                att_control_msg.angular.z = -direct_yaw * (yaw_max_rate);
+
+            } else {    
+                // Use joystick values
+                att_control_msg.linear.y = - left_right * roll_max;
+                att_control_msg.linear.x = back_forward * pitch_max;
+                current_yaw += yaw * (yaw_max_rate) * dt.toSec();
+                att_control_msg.linear.z = up_down * throttle_max ;
+                att_control_msg.angular.z = - yaw * (yaw_max_rate);
+            }
             att_control_pub.publish(att_control_msg);
         }
 
