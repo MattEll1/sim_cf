@@ -56,6 +56,26 @@
     <origin xyz="0 0 0" rpy="0 0 0" />
   </xacro:imu_plugin_macro>
   
+  <!-- BMI088 IMU -->
+  <!-- <xacro:imu_plugin_macro
+    namespace="${namespace}"
+    imu_suffix=""
+    parent_link="base_link"
+    imu_topic="${imu_topic}"
+    mass_imu_sensor="0.00001"
+    rate="1000"
+    gyroscope_noise_density="2.44e-4"
+    gyroscope_random_walk="4.0e-5"
+    gyroscope_bias_correlation_time="100.0"
+    gyroscope_turn_on_bias_sigma="0.05"
+    accelerometer_noise_density="2.26e-3"
+    accelerometer_random_walk="2.0e-4"
+    accelerometer_bias_correlation_time="300.0"
+    accelerometer_turn_on_bias_sigma="0.2">
+    <inertia ixx="0.0000000001" ixy="0.0" ixz="0.0" iyy="0.0000000001" iyz="0.0" izz="0.0000000001" />
+    <origin xyz="0 0 0" rpy="0 0 0" />
+  </xacro:imu_plugin_macro> -->
+  
 <!--     <xacro:imu_plugin_macro
       namespace="${namespace}"
       imu_suffix=""

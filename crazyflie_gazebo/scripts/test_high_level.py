@@ -24,8 +24,8 @@ if __name__ == '__main__':
 
     cf.setParam("commander/enHighLevel", 1)
 
-    cf.takeoff(targetHeight = 1.5, duration = 2.0)
-    time.sleep(5.0)
+    cf.takeoff(targetHeight = 1.5, duration = 3.5)
+    time.sleep(7.0)
 
     # (t , x , y) = circle_trajectory(50 , 10 , 0.8)
 

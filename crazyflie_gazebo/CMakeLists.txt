@@ -475,6 +475,12 @@ add_dependencies(joy_control_node crazyflie_gazebo_generate_messages_cpp)
 target_link_libraries(joy_control_node ${catkin_LIBRARIES})
 #==============================================================================================// 
 
+#===================================== Joy Control Node 2=======================================//
+add_executable(joy_control_node2 src/crazyflie_ros/joy_control2.cpp)
+add_dependencies(joy_control_node crazyflie_gazebo_generate_messages_cpp)
+target_link_libraries(joy_control_node2 ${catkin_LIBRARIES})
+#==============================================================================================// 
+
 # # Configure the setup script
 # if (catkin_FOUND)
 #   catkin_add_env_hooks(50_sitl_gazebo_setup

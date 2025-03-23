@@ -7,7 +7,7 @@
 <robot name="crazyflie" xmlns:xacro="http://ros.org/wiki/xacro">
   <!-- Properties -->
   <xacro:property name="namespace" value="$(arg namespace)" />
-  <xacro:property name="rotor_velocity_slowdown_sim" value="50" />
+  <xacro:property name="rotor_velocity_slowdown_sim" value="10" />
 
   <xacro:property name="mesh_file" value="crazyflie.dae" />
   <xacro:property name="mesh_scale" value="1 1 1"/>
