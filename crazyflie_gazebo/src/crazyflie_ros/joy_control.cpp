@@ -36,8 +36,8 @@
 #define MAIN_LOOP_RATE             		100            		//main loop rate for getting more faster all the subscriber datas
 
 #define PI_                   			180.0		//3.1415926535897
-#define PITCH_MAX               		(PI_/20.0)    		//Max pitch angle allowed
-#define ROLL_MAX                		(PI_/20.0)    		//Max roll angle allowed
+#define PITCH_MAX               		(PI_/6.0)    		//Max pitch angle allowed
+#define ROLL_MAX                		(PI_/6.0)    		//Max roll angle allowed
 #define YAW_MAX_RATE                    (PI_/3.0)           //in deg per seg
 
 #define THROTTLE_MAX             		55000           	//Max throttle allowed
@@ -524,8 +524,8 @@ int main(int argc, char **argv)
             vel_control_pub.publish(vel_control_msg);
         }
         if(!only_command && is_attctl){       //Attitude control
-            att_control_msg.linear.y = - left_right * roll_max;
-            att_control_msg.linear.x = back_forward * pitch_max;
+            att_control_msg.linear.y = (- left_right * roll_max);
+            att_control_msg.linear.x = (back_forward * pitch_max);
             current_yaw += yaw * (yaw_max_rate) * dt.toSec();
             att_control_msg.linear.z = up_down * throttle_max ;
             att_control_msg.angular.z = - yaw * (yaw_max_rate);

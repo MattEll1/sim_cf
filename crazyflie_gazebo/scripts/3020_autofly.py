@@ -30,7 +30,7 @@ def main():
             
             if elapsed < active_duration:
                 # Active control phase (first 5 seconds)
-                msg.data = [1.0, 0.0, 0.0, 0.4]  # [roll, pitch, yaw, throttle]
+                msg.data = [0.0, 15.0, 0.0, 50000]  # [roll, pitch, yaw, throttle]
                 print("Active control: %d seconds remaining" % (5 - elapsed.to_sec()))
             else:
                 # Zero control phase (after 5 seconds)

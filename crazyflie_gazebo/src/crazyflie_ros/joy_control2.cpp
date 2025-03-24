@@ -38,8 +38,8 @@
 #define MAIN_LOOP_RATE             		100            		//main loop rate for getting more faster all the subscriber datas
 
 #define PI_                   			180.0		//3.1415926535897
-#define PITCH_MAX               		(PI_/20.0)    		//Max pitch angle allowed
-#define ROLL_MAX                		(PI_/20.0)    		//Max roll angle allowed
+#define PITCH_MAX               		(PI_/6.0)    		//Max pitch angle allowed
+#define ROLL_MAX                		(PI_/6.0)    		//Max roll angle allowed
 #define YAW_MAX_RATE                    (PI_/3.0)           //in deg per seg
 
 #define THROTTLE_MAX             		55000           	//Max throttle allowed
@@ -188,10 +188,10 @@ void attitude_init(bool reset_control_type){
 
 void direct_control_callback(const std_msgs::Float32MultiArray::ConstPtr& msg) {
     if (msg->data.size() >= 4) {
-        direct_roll = msg->data[0];     // Range: -1.0 to 1.0
-        direct_pitch = msg->data[1];    // Range: -1.0 to 1.0
-        direct_yaw = msg->data[2];      // Range: -1.0 to 1.0
-        direct_throttle = msg->data[3]; // Range: 0.0 to 1.0
+        direct_roll = msg->data[0] / roll_max;     /// Actual degrees to normalized
+        direct_pitch = msg->data[1] / pitch_max;    // Actual degrees to normalized
+        direct_yaw = msg->data[2] / yaw_max_rate;      // Actual degrees to normalized
+        direct_throttle = msg->data[3] / throttle_max; // Actual throttle to normalized
         using_direct_control = true;    // Switch to direct control mode
         ROS_INFO("Received direct control: [%f, %f, %f, %f]", 
             msg->data[0], msg->data[1], msg->data[2], msg->data[3]);

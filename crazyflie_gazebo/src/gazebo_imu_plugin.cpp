@@ -315,8 +315,8 @@ void GazeboImuPlugin::OnUpdate(const common::UpdateInfo& _info) {
                                      angular_vel_I.Y(),
                                      angular_vel_I.Z());
 
-  // gzdbg << linear_acceleration_I << std::endl;
-  // gzdbg << angular_velocity_I << std::endl;
+  gzdbg << "Linear acceleration: " << linear_acceleration_I << std::endl;
+  gzdbg << "Angular velocity: " <<  angular_velocity_I << std::endl;
   // gzdbg << "dt = " << dt << std::endl;
 
   addNoise(&linear_acceleration_I, &angular_velocity_I, dt);
