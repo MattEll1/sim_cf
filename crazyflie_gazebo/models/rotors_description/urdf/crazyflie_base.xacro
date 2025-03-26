@@ -37,7 +37,7 @@
   </xacro:if>
 
   <!-- MPU-6500 IMU obtained from  experiments and match datasheets-->
-  <xacro:imu_plugin_macro
+  <!-- <xacro:imu_plugin_macro
     namespace="${namespace}"
     imu_suffix=""
     parent_link="base_link"
@@ -54,10 +54,10 @@
     accelerometer_turn_on_bias_sigma="0.1">
     <inertia ixx="0.0000000001" ixy="0.0" ixz="0.0" iyy="0.0000000001" iyz="0.0" izz="0.0000000001" />
     <origin xyz="0 0 0" rpy="0 0 0" />
-  </xacro:imu_plugin_macro>
+  </xacro:imu_plugin_macro> -->
   
   <!-- BMI088 IMU -->
-  <!-- <xacro:imu_plugin_macro
+  <xacro:imu_plugin_macro
     namespace="${namespace}"
     imu_suffix=""
     parent_link="base_link"
@@ -74,7 +74,7 @@
     accelerometer_turn_on_bias_sigma="0.2">
     <inertia ixx="0.0000000001" ixy="0.0" ixz="0.0" iyy="0.0000000001" iyz="0.0" izz="0.0000000001" />
     <origin xyz="0 0 0" rpy="0 0 0" />
-  </xacro:imu_plugin_macro> -->
+  </xacro:imu_plugin_macro>
   
 <!--     <xacro:imu_plugin_macro
       namespace="${namespace}"
